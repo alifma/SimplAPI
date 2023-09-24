@@ -53,3 +53,23 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: 'Error logging in', error: error.message });
   }
 };
+
+// User default
+exports.createDefaultUser = async (defaultUser) => {
+  try {
+    // Check if the user already exists
+    const existingUser = await db.User.findOne({ where: { username: defaultUser.username } });
+    if (!existingUser) {
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(defaultUser.password, 10);
+      // Create a new user
+      await db.User.create({ username: defaultUser.username, password: hashedPassword, role: defaultUser.role });
+      console.log(`Created default user: ${defaultUser.username}:${defaultUser.password}`);
+    } else {
+      console.log('Default user already exist');
+    }
+  } catch (error) {
+    console.error('Error creating default user:', error);
+  }
+};
+

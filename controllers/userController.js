@@ -17,7 +17,7 @@ exports.getCurrentUser = async (req, res) => {
   }
 };
 
-// Get the current user
+// Get user by id
 exports.getUserById = async (req, res) => {
   try {
     const currentUser = await db.User.findByPk(req.user.userId);
@@ -32,6 +32,22 @@ exports.getUserById = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching current user', error: error.message });
+  }
+};
+
+// Get user by username
+exports.getUserByUsername = async (req, res) => {
+  try {
+    const user = await db.User.findAll({ where: { username: req.username }, limit: 1 }, {
+      attributes: { exclude: ['password'] }, // Exclude password field from response
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
     res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching current user', error: error.message });
