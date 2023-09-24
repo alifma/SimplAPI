@@ -69,7 +69,7 @@ exports.updateItem = async (req, res) => {
 
     await item.save();
 
-    res.status(200).json({ message: 'Item updated successfully', item });
+    res.status(200).json({ message: 'Item updated successfully', id: item.id });
   } catch (error) {
     res.status(500).json({ message: 'Error updating item', error: error.message });
   }

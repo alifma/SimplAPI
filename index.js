@@ -13,9 +13,9 @@ const itemRoutes = require('./routes/items');
 const userRoutes = require('./routes/users');
 
 // Use route handlers
-app.use('/api/auth', authRoutes);
-app.use('/api/items', itemRoutes);
-app.use('/api/users', userRoutes);
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/items', itemRoutes);
+app.use('/api/v1/users', userRoutes);
 
 db.sequelize.sync().then(() => {
   app.listen(port, () => {

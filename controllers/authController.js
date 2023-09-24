@@ -6,7 +6,7 @@ const { SECRET_KEY, JWT_EXPIRATION } = process.env;
 // User registration
 exports.register = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username, password, role } = req.body;
 
     // Check if the user already exists
     const existingUser = await db.User.findOne({ where: { username } });
@@ -18,9 +18,9 @@ exports.register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create a new user
-    const newUser = await db.User.create({ username, password: hashedPassword });
+    const newUser = await db.User.create({ username, password: hashedPassword, role});
 
-    res.status(201).json({ message: 'User registered successfully', user: newUser });
+    res.status(201).json({ message: 'User registered successfully', id: newUser.id });
   } catch (error) {
     res.status(500).json({ message: 'Error registering user', error: error.message });
   }
