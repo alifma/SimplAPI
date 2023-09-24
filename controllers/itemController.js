@@ -1,4 +1,5 @@
 const db = require('../models');
+const {Op} = require('sequelize');
 
 // Create a new item
 exports.createItem = async (req, res) => {
@@ -16,9 +17,18 @@ exports.createItem = async (req, res) => {
 // Get all items
 exports.getAllItems = async (req, res) => {
   try {
-    const items = await db.Item.findAll();
+    const { limit = 10, page = 1, search = '' } = req.query;
+    const offset = (page - 1) * limit;
+    // Construct a where clause to filter items based on the search parameter
+    const whereClause = search ? { name: { [Op.like]: `%${search}%` } } : {};
 
-    res.status(200).json(items);
+    const { count, rows: items } = await db.Item.findAndCountAll({
+      where: whereClause,
+      limit: parseInt(limit),
+      offset: parseInt(offset),
+    });
+
+    res.status(200).json({ data: items, total: count });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching items', error: error.message });
   }
